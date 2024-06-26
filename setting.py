@@ -2,9 +2,14 @@ import json
 import os
 
 SETTINGS_FILE = "settings.json"
-class Setting():
+
+
+class Setting:
+    
     def __init__(self):
+        self.settings = None
         self.load_settings()
+        
     def load_settings(self):
         if os.path.exists(SETTINGS_FILE):
             with open(SETTINGS_FILE, 'r') as file:

@@ -33,12 +33,17 @@ class TextGeneratorApp(QMainWindow):
         super().__init__()
 
         self.setting = s.Setting()
-        settings = self.setting.get_settings()
+        self.settings = self.setting.get_settings()
 
-        if 'darkmode' in settings.keys():
-            self.dark_mode = settings["darkmode"]
+        if 'darkmode' in self.settings.keys():
+            self.dark_mode = self.settings["darkmode"]
         else:
             self.dark_mode = False
+
+        if 'birthday_file' in self.settings.keys():
+            self.birthday_file = util.count_birthday_db()
+        else:
+            self.birthday_file = '파일없음'
 
         self.initUI()
         self.news_list = []
@@ -117,7 +122,7 @@ class TextGeneratorApp(QMainWindow):
         # 파일 첨부용 버튼
         attach_file_button = QPushButton('파일 첨부')
         attach_file_button.clicked.connect(self.attach_file)
-        self.attach_file_text = QLabel('파일 없음')
+        self.attach_file_text = QLabel(self.settings['birthday_file'])
         file_layout.addWidget(self.attach_file_text)
         file_layout.addWidget(attach_file_button)
 
@@ -440,9 +445,10 @@ class TextGeneratorApp(QMainWindow):
             if file_name.lower().endswith(('.csv', '.xls', '.xlsx')):
                 self.attach_file_text.setText(file_name)
                 # 파일을 저장하는 함수 호출
-                success = util.save(file_name)
+                success = util.save_to_db(file_name)
                 if success:
                     QMessageBox.information(self, "성공", "파일이 성공적으로 저장되었습니다.")
+                    self.setting.set_settings("birthday_file", util.count_birthday_db())
                 else:
                     QMessageBox.warning(self, "오류", "파일 저장 중 오류가 발생했습니다.")
 
