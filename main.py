@@ -239,6 +239,7 @@ class TextGeneratorApp(QMainWindow):
         self.file_menu.addAction(self.file_action2)
 
         self.dark_mode_action = QAction('다크 모드', self, checkable=True)
+        self.dark_mode_action.setChecked(self.dark_mode)
         self.settings_menu.addAction(self.dark_mode_action)
         self.dark_mode_action.triggered.connect(self.toggle_dark_mode)
         self.dark_stylesheet = """
