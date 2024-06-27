@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd
-
+from datetime import datetime, timedelta
 
 def save(file_path):
     try:
@@ -136,10 +136,48 @@ def count_birthday_db():
 
         # 연결 종료
         conn.close()
-        return res
+        print(res)
+        return int(res)
 
     except Exception as e:
         print(f"Error: {e}")
         return None
 
-count_birthday_db()
+
+def get_birthday_week(yymmdd):
+    try:
+        # 입력 날짜를 datetime 객체로 변환
+        base_date = datetime.strptime(yymmdd, "%y%m%d")
+        end_date = base_date + timedelta(days=6)
+
+        # 시작 날짜와 종료 날짜의 mmdd 형식을 추출
+        base_mmdd = base_date.strftime("%m%d")
+        end_mmdd = end_date.strftime("%m%d")
+
+        # SQLite 데이터베이스에 연결
+        conn = sqlite3.connect('db.sqlite3')
+        cursor = conn.cursor()
+
+        # SQL 쿼리를 사용하여 yymmdd의 날짜로부터 7일 이내의 모든 생일자를 추출
+        query = f"""
+        SELECT 생년, 생일, 이름 FROM birthday
+        WHERE 
+            생일 BETWEEN '{base_mmdd}' AND '{end_mmdd}'
+        ORDER BY 생일
+        """
+        print(query)
+        res = pd.read_sql_query(query, conn)
+
+        # 결과를 'YY또래 이름(dd일)' 형식으로 포맷
+        birthday_list = [f"{row['생년']}또래 {row['이름']}({row['생일'][2:]}일)" for index, row in res.iterrows()]
+
+        # 연결 종료
+        conn.close()
+
+        return birthday_list
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+print(get_birthday_week('240421'))
