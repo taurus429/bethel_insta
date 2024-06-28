@@ -80,8 +80,8 @@ def initUI(app):
     attach_file_button.clicked.connect(app.attach_file)
 
     file_label = '파일 없음'
-    if app.settings['birthday_file']:
-        print("파일없음")
+    if app.setting.get_settings('birthday_file'):
+        file_label = f'{app.setting.get_settings("birthday_file")}명 등록'
     app.attach_file_text = QLabel(file_label)
     file_layout.addWidget(app.attach_file_text)
     file_layout.addWidget(attach_file_button)

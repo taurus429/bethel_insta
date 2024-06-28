@@ -25,8 +25,11 @@ class Setting:
         self.settings[key] = data
         self.save_settings(self.settings)
 
-    def get_settings(self):
-        return self.settings
+    def get_settings(self, key):
+        if key in self.settings.keys():
+            return self.settings[key]
+        else:
+            return None
 
     def save_settings(self, settings):
         with open(SETTINGS_FILE, 'w') as file:

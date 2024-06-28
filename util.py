@@ -165,11 +165,12 @@ def get_birthday_week(yymmdd):
             생일 BETWEEN '{base_mmdd}' AND '{end_mmdd}'
         ORDER BY 생일
         """
-        print(query)
         res = pd.read_sql_query(query, conn)
 
         # 결과를 'YY또래 이름(dd일)' 형식으로 포맷
-        birthday_list = [f"{row['생년']}또래 {row['이름']}({row['생일'][2:]}일)" for index, row in res.iterrows()]
+        birthday_list = []
+        for index,row in res.iterrows():
+            birthday_list.append(f"{row['생년']}또래 {row['이름']}({int(row['생일'][2:])}일)")
 
         # 연결 종료
         conn.close()
@@ -179,5 +180,3 @@ def get_birthday_week(yymmdd):
     except Exception as e:
         print(f"Error: {e}")
         return None
-
-print(get_birthday_week('240421'))

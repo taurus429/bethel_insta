@@ -50,6 +50,8 @@ class TextGeneratorApp(QMainWindow):
         if calendar_popup.exec_():
             selected_date = calendar_popup.selected_date.toString('yyyy-MM-dd')
             self.date_edit.setText(selected_date)
+            selected_date = calendar_popup.selected_date.toString('yyMMdd')
+            self.birthday_list = util.get_birthday_week(selected_date)
 
     def on_type_changed(self):
         if self.type_combo.currentText() == '블로그':
@@ -141,6 +143,12 @@ class TextGeneratorApp(QMainWindow):
         if self.outing_radio1.isChecked():
             result += "❗️ 더원 예배 뒤에 아웃팅 있습니다!\n"
 
+        if len(self.birthday_list) != 0:
+            result += "🎂 이번 주 생일자: "
+            for b in self.birthday_list:
+                result += f"{b}, "
+            result = result[:-2]
+            result += "\n"
         if self.qt_check1 or self.qt_check2 or self.qt_check3 or self.qt_check4 or self.qt_check5:
             day = ""
             if self.qt_check1.isChecked():
@@ -174,12 +182,12 @@ class TextGeneratorApp(QMainWindow):
         if file_name:
             # 확장자 확인 (csv 또는 excel 파일만 허용)
             if file_name.lower().endswith(('.csv', '.xls', '.xlsx')):
-                self.attach_file_text.setText(file_name)
                 # 파일을 저장하는 함수 호출
                 success = util.save_to_db(file_name)
                 if success:
                     QMessageBox.information(self, "성공", "파일이 성공적으로 저장되었습니다.")
                     self.setting.set_settings("birthday_file", util.count_birthday_db())
+                    self.attach_file_text.setText(f'{self.setting.get_settings("birthday_file")}명 등록')
                 else:
                     QMessageBox.warning(self, "오류", "파일 저장 중 오류가 발생했습니다.")
 
