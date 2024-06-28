@@ -5,8 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QDate
 import util, init_ui, init_util
-import setting as s
-
+import datetime
 
 class CalendarPopup(QDialog):
     def __init__(self, parent=None):
@@ -115,12 +114,19 @@ class TextGeneratorApp(QMainWindow):
         self.schedule_list.remove(text_widget)
 
     def generate_text(self):
+
         date = self.date_edit.text()
         text_type = self.type_combo.currentText()
         title = self.title_edit.text()
         scripture = self.scripture_edit.text()
         content = self.content_edit.toPlainText()
         pray = self.pray_combo.currentText()
+
+        weekday = datetime.date(int(date[:4]), int(date[5:7]), int(date[8:10])).weekday()
+        week = ['월', '화', '수', '목', '금', '토', '일']
+        if text_type in ['마하나임 예배', '더원 예배'] and weekday != 6:
+            QMessageBox.warning(self, '요일 경고', f'{text_type} 날짜가 {week[weekday]}요일로 입력되어있습니다.')
+
 
         result = f"{date[2:4]}.{date[5:7]}.{date[8:10]} {text_type}\n\n"
         if title:
