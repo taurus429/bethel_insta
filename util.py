@@ -177,6 +177,29 @@ def get_birthday_week(yymmdd):
 
         return birthday_list
 
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+
+def drop_table(table_name):
+    try:
+        # SQLite 데이터베이스에 연결
+        conn = sqlite3.connect('db.sqlite3')
+        cursor = conn.cursor()
+
+        # SQL 쿼리를 사용하여 테이블 삭제하기
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+
+        # 변경 사항 커밋
+        conn.commit()
+
+        # 연결 종료
+        conn.close()
+
+        return True
+
     except Exception as e:
         print(f"Error: {e}")
         return None

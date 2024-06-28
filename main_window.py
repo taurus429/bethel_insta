@@ -32,6 +32,14 @@ class TextGeneratorApp(QMainWindow):
         init_util.initUtil(self)
         init_ui.initUI(self)
 
+    def birthday_file_delete(self):
+        if QMessageBox.warning(self, '생일자 파일 삭제', "기존에 입력된 생일자 파일을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.Cancel) == QMessageBox.Yes:
+            if util.drop_table("birthday"):
+                self.setting.set_settings("birthday_file", None)
+                self.attach_file_text.setText(f'파일 없음')
+                QMessageBox.information(self, '삭제 완료', '기존 파일이 성공적으로 삭제되었습니다.')
+            else:
+                QMessageBox.critical(self, '삭제 실패', '파일 삭제 중 문제가 발생했습니다.')
 
     def toggle_dark_mode(self):
         self.setting.set_settings("darkmode", not self.dark_mode)
@@ -50,7 +58,8 @@ class TextGeneratorApp(QMainWindow):
             selected_date = calendar_popup.selected_date.toString('yyyy-MM-dd')
             self.date_edit.setText(selected_date)
             selected_date = calendar_popup.selected_date.toString('yyMMdd')
-            self.birthday_list = util.get_birthday_week(selected_date)
+            if self.setting.get_settings("birthday_file") is not None:
+                self.birthday_list = util.get_birthday_week(selected_date)
 
     def on_type_changed(self):
         if self.type_combo.currentText() == '블로그':
@@ -125,7 +134,7 @@ class TextGeneratorApp(QMainWindow):
         weekday = datetime.date(int(date[:4]), int(date[5:7]), int(date[8:10])).weekday()
         week = ['월', '화', '수', '목', '금', '토', '일']
         if text_type in ['마하나임 예배', '더원 예배'] and weekday != 6:
-            QMessageBox.warning(self, '요일 경고', f'{text_type} 날짜가 {week[weekday]}요일로 입력되어있습니다.')
+            QMessageBox.warning(self, '요일 오입력 방지', f'{text_type} 날짜가 {week[weekday]}요일로 입력되어있습니다.')
 
 
         result = f"{date[2:4]}.{date[5:7]}.{date[8:10]} {text_type}\n\n"

@@ -198,10 +198,9 @@ def initUI(app):
     app.settings_menu = app.menu_bar.addMenu('설정')
 
     # 파일 메뉴에 액션 추가
-    app.file_action1 = QAction('파일 탭 1', app)
-    app.file_action2 = QAction('파일 탭 2', app)
+    app.file_action1 = QAction('생일자 파일 삭제', app)
     app.file_menu.addAction(app.file_action1)
-    app.file_menu.addAction(app.file_action2)
+    app.file_action1.triggered.connect(app.birthday_file_delete)
 
     app.dark_mode_action = QAction('다크 모드', app, checkable=True)
     app.dark_mode_action.setChecked(app.dark_mode)
